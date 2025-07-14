@@ -1,0 +1,174 @@
+Perfect — here's your final, crystal-clear Replit project prompt with notations, technology stack suggestions, and all unique features included. This is crafted for feeding into Replit, GitHub Copilot, or any other AI code generator. It balances clarity, compatibility, and innovation, and is ideal for browser-based mobile-first development.
+
+
+---
+
+✅ FINAL REPLIT COMMAND (WITH CLEAR NOTATIONS & FEATURES)
+
+> "Build a mobile-first, location-based social media web application using the following tech stack and features. Optimize for live, real-world content sharing with privacy, creativity, and AI moderation. Prioritize simplicity, scalability, and browser compatibility throughout.
+
+
+---
+
+🧠 Tech Stack & Notations:
+
+Frontend:
+
+HTML5 → Base structure; universally supported in all browsers.
+
+CSS3 with TailwindCSS → Mobile-first, responsive UI design using utility-first framework.
+
+JavaScript (Vanilla or React.js) → For interactivity and component-based structure. Use React if modular UI is needed.
+
+
+Backend:
+
+Node.js + Express.js → Easiest backend setup in Replit, beginner-friendly and powerful for REST APIs.
+
+Database:
+
+LowDB (JSON-based) → For quick prototyping and local persistence.
+
+Optionally, Redis for in-memory performance in real-time modules.
+
+
+
+Camera & Location APIs:
+
+Use WebRTC (navigator.mediaDevices.getUserMedia) for accessing live camera directly in-browser.
+
+Use HTML5 Geolocation API (navigator.geolocation.getCurrentPosition) for location tracking.
+
+
+Browser Support:
+
+All features must work across Chrome, Firefox, Safari, and Android/iOS browsers.
+
+JavaScript is preferred as it runs both front-end and back-end seamlessly on Replit.
+
+
+
+
+---
+
+🧩 Core Features to Implement:
+
+1. Live Camera-Only Uploads
+
+When a user chooses to upload, it must launch the camera (no file picker or gallery access).
+
+Use getUserMedia() for photo/video capture.
+
+
+
+2. Geolocation-Based Post Feed with Radius Filter
+
+Users set a radius (50m to 5000m); posts are visible only within that area.
+
+User sees posts only from others within that range, updated in real-time.
+
+
+
+3. AI-Based Content Moderation
+
+Block adult/vulgar content using NSFW.js, Google Vision API, or SafeSearch AI.
+
+No post should upload without passing moderation filter.
+
+
+
+4. Basic One-to-One Messaging System
+
+Real-time or pseudo-real-time messaging using WebSockets or long polling.
+
+
+
+
+
+---
+
+🚀 Unique Innovative Features (Must Include):
+
+5. GeoTime Capsules
+
+Posts appear only at a specific place and scheduled future time.
+
+
+
+6. Anonymous Local Confessions Wall
+
+Short, anonymous messages visible only within a 200m radius.
+
+Allow emoji-only reactions, no replies or IDs.
+
+
+
+7. Truth Mode (No Filters, Real Identity)
+
+Disable image filters; require 3-second selfie for authenticity before upload.
+
+
+
+8. Ambient Proximity Awareness
+
+Show anonymous hints like “3 people near you are viewing your post.”
+
+
+
+9. Disappearing Footprints
+
+Posts self-delete if not viewed within the set radius + time window (e.g., 30 min).
+
+
+
+10. AI-Generated Local Daily Summary
+
+Summarize daily local activity: “12 new posts nearby, trending: ‘Rainy Day’.”
+
+
+
+11. Trust Score System
+
+Track users based on real location posting, positive interactions, and moderation history.
+
+
+
+12. GeoSwap
+
+Two users in the same area (50m) can exchange 1 photo blindly — each must send before seeing the other.
+
+
+
+13. Hyperlocal Challenges
+
+Auto-generate prompts based on local area (e.g., “Take a picture of something blue near the bus stop.”)
+
+
+
+14. Offline Geo-Triggered Posts
+
+User drafts post and sets a geolocation; post auto-publishes when they enter that location.
+
+
+
+
+
+---
+
+📌 Optional Enhancements:
+
+Enable Dark Mode with Tailwind.
+
+Make the app a Progressive Web App (PWA) so it’s installable on phones.
+
+Add Push Notification support for real-time engagement.
+
+Support local language content (i18n) using a translation dictionary.
+
+
+
+---
+
+🎯 Objective:
+
+Create a social media prototype that delivers authentic, real-time, hyperlocal content, encourages creativity and safe sharing, and fosters spontaneous micro-communities. The application should run inside mobile browsers without requiring app store installation and must emphasize privacy, live interaction, and AI-assisted moderation.
