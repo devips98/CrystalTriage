@@ -28,31 +28,31 @@ export default function Home() {
   const { isConnected } = useWebSocket();
 
   // Fetch nearby posts
-  const { data: posts = [], isLoading: postsLoading, refetch: refetchPosts } = useQuery({
+  const { data: posts = [], isLoading: postsLoading, refetch: refetchPosts } = useQuery<Post[]>({
     queryKey: ['/api/posts/nearby', location?.latitude, location?.longitude, radius],
     enabled: !!location,
   });
 
   // Fetch nearby confessions
-  const { data: confessions = [] } = useQuery({
+  const { data: confessions = [] } = useQuery<Confession[]>({
     queryKey: ['/api/confessions/nearby', location?.latitude, location?.longitude, 200],
     enabled: !!location,
   });
 
   // Fetch nearby challenges
-  const { data: challenges = [] } = useQuery({
+  const { data: challenges = [] } = useQuery<Challenge[]>({
     queryKey: ['/api/challenges/nearby', location?.latitude, location?.longitude, 1000],
     enabled: !!location,
   });
 
   // Fetch available geo time capsules
-  const { data: geoTimeCapsules = [] } = useQuery({
+  const { data: geoTimeCapsules = [] } = useQuery<GeoTimeCapsule[]>({
     queryKey: ['/api/geotimecapsules/available', location?.latitude, location?.longitude],
     enabled: !!location,
   });
 
   // Fetch daily summary
-  const { data: summaryData } = useQuery({
+  const { data: summaryData } = useQuery<{ summary: any }>({
     queryKey: ['/api/summary/daily', location?.latitude, location?.longitude, radius],
     enabled: !!location,
   });
@@ -71,7 +71,11 @@ export default function Home() {
     ...confessions.map((confession: Confession) => ({ ...confession, type: 'confession' })),
     ...challenges.map((challenge: Challenge) => ({ ...challenge, type: 'challenge' })),
     ...geoTimeCapsules.map((capsule: GeoTimeCapsule) => ({ ...capsule, type: 'geotimecapsule' })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  ].sort((a, b) => {
+    const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return dateB - dateA;
+  });
 
   if (locationError) {
     return (
@@ -95,12 +99,15 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       {/* Top Navigation */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between relative z-50">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 bg-accent/10 dark:bg-accent/20 px-3 py-1.5 rounded-full">
-            <MapPin className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-3 sm:px-4 lg:px-6 py-3 flex items-center justify-between relative z-50">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-1 sm:space-x-2 bg-accent/10 dark:bg-accent/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-accent" />
+            <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:inline">
               {location ? 'Current Location' : 'Loading...'}
+            </span>
+            <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 sm:hidden">
+              {location ? 'Here' : 'Loading...'}
             </span>
             <span className="text-xs text-gray-500 dark:text-gray-400">
               {formatRadius(radius)}
@@ -108,9 +115,9 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-1 text-sm text-gray-600 dark:text-gray-400">
-            <Users className="w-4 h-4 text-secondary" />
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-1 text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+            <Users className="w-3 h-3 sm:w-4 sm:h-4 text-secondary" />
             <span>{nearbyUsers}</span>
           </div>
           
@@ -135,38 +142,65 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto pb-20">
-        <RadiusControl radius={radius} onRadiusChange={setRadius} />
-        
-        {summaryData && (
-          <ActivitySummary summary={summaryData.summary} />
-        )}
+      <main className="flex-1 overflow-y-auto pb-16 sm:pb-20">
+        <div className="lg:flex lg:max-w-7xl lg:mx-auto">
+          {/* Main Feed Area */}
+          <div className="flex-1 max-w-4xl mx-auto lg:max-w-none">
+            <RadiusControl radius={radius} onRadiusChange={setRadius} />
+          
+          {summaryData && (
+            <ActivitySummary summary={summaryData.summary} />
+          )}
 
-        {/* Tab Navigation */}
-        <div className="px-4 mb-4">
-          <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-            <Button
-              variant={activeTab === 'posts' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('posts')}
-              className="flex-1 py-2"
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              Feed
-            </Button>
-            <Button
-              variant={activeTab === 'geoswap' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('geoswap')}
-              className="flex-1 py-2"
-            >
-              <Package className="w-4 h-4 mr-2" />
-              GeoSwap
-            </Button>
-          </div>
-        </div>
+          {/* Tab Navigation */}
+          <div className="px-3 sm:px-4 lg:px-6 mb-4 sm:mb-6">
+            <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg max-w-md mx-auto sm:max-w-none">
+              <Button
+                variant={activeTab === 'posts' ? 'default' : 'ghost'}
+                onClick={() => setActiveTab('posts')}
+                className="flex-1 py-2 sm:py-3 text-sm sm:text-base"
+              >
+                <Camera className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Feed</span>
+                <span className="sm:hidden">Posts</span>
+              </Button>
+              <Button
+                variant={activeTab === 'geoswap' ? 'default' : 'ghost'}
+                onClick={() => setActiveTab('geoswap')}
+                className="flex-1 py-2 sm:py-3 text-sm sm:text-base"
+              >
+                <Package className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">GeoSwap</span>
+                <span className="sm:hidden">Swap</span>
+              </Button>
+            </div>
+          </div>          {/* Photo Post Button */}
+          {activeTab === 'posts' && (
+            <div className="px-3 sm:px-4 lg:px-6 mb-4 sm:mb-6">
+              <Button
+                onClick={() => setCameraOpen(true)}
+                className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white py-4 sm:py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center space-x-3 sm:space-x-4 group relative overflow-hidden"
+              >
+                {/* Subtle shine animation */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                
+                <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full group-hover:bg-white/30 transition-colors relative z-10">
+                  <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <div className="flex flex-col items-start relative z-10">
+                  <span className="font-semibold text-base sm:text-lg">Share a Photo</span>
+                  <span className="text-xs sm:text-sm opacity-90">Capture what's happening around you</span>
+                </div>
+                <div className="text-xl sm:text-2xl group-hover:scale-110 transition-transform relative z-10">📸</div>
+              </Button>
+            </div>
+          )}
 
-        {/* Content Feed */}
-        <div className="space-y-4 px-4">
-          {activeTab === 'posts' ? (
+          {/* Content Feed */}
+          <div className="space-y-3 sm:space-y-4 px-3 sm:px-4 lg:px-6">
+            {/* Desktop: Create a grid layout for larger screens */}
+            <div className="lg:grid lg:grid-cols-2 lg:gap-6 space-y-3 sm:space-y-4 lg:space-y-0">
+              {activeTab === 'posts' ? (
             postsLoading ? (
               <div className="space-y-4">
                 {[...Array(3)].map((_, i) => (
@@ -197,42 +231,97 @@ export default function Home() {
               ))
             ) : (
               <div className="text-center py-12">
-                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Camera className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                  No content nearby
+                  No content nearby yet
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
                   Be the first to share something in your area!
                 </p>
-                <Button onClick={() => setCameraOpen(true)} className="bg-primary hover:bg-primary/90">
-                  <Camera className="w-4 h-4 mr-2" />
-                  Create Post
-                </Button>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => setCameraOpen(true)} 
+                    className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all"
+                  >
+                    <Camera className="w-5 h-5 mr-2" />
+                    Take a Photo
+                  </Button>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Share what's happening around you 📸
+                  </p>
+                </div>
               </div>
-            )
-          ) : (
-            <GeoSwapList />
-          )}
+            )            ) : (
+              <GeoSwapList />              )}
+            </div>
+          </div>
+          
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block lg:w-80 lg:ml-6">
+            <div className="sticky top-6 space-y-6">
+              {/* Quick Stats */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                <h3 className="font-semibold text-lg mb-4">Local Activity</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Posts nearby</span>
+                    <span className="font-medium">{posts.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Active users</span>
+                    <span className="font-medium">{nearbyUsers}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600 dark:text-gray-400">Current radius</span>
+                    <span className="font-medium">{formatRadius(radius)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm">
+                <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => setCameraOpen(true)}
+                    className="w-full bg-primary hover:bg-primary/90"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    Take Photo
+                  </Button>
+                  <Button
+                    onClick={() => setGeoSwapOpen(true)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Package className="w-4 h-4 mr-2" />
+                    Create GeoSwap
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
       </main>
 
-      {/* Floating Action Buttons */}
-      <div className="fixed bottom-24 right-6 flex flex-col space-y-3 z-40">
+      {/* Floating Action Buttons - Mobile Only */}
+      <div className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 flex flex-col space-y-2 sm:space-y-3 z-40 lg:hidden">
         <Button
           onClick={() => setGeoSwapOpen(true)}
-          className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full shadow-lg hover:scale-110 transition-transform"
+          className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full shadow-lg hover:scale-110 transition-transform touch-target"
           size="icon"
         >
-          <Package className="w-5 h-5 text-white" />
+          <Package className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
         </Button>
         <Button
           onClick={() => setCameraOpen(true)}
-          className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full shadow-lg hover:scale-110 transition-transform"
+          className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-primary to-secondary rounded-full shadow-lg hover:scale-110 transition-transform touch-target"
           size="icon"
         >
-          <Camera className="w-6 h-6 text-white" />
+          <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
         </Button>
       </div>
 

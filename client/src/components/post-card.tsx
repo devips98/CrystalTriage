@@ -15,7 +15,8 @@ import {
   Shield, 
   Trophy, 
   Timer,
-  Users
+  Users,
+  Camera
 } from "lucide-react";
 import type { Post, Confession, Challenge, GeoTimeCapsule } from "@shared/schema";
 
@@ -73,21 +74,21 @@ export default function PostCard({ content, type, onRefresh }: PostCardProps) {
     return (
       <Card className="bg-white dark:bg-gray-800 overflow-hidden">
         {/* Post Header */}
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="w-10 h-10">
+        <div className="p-3 sm:p-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
               <AvatarImage src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-semibold text-gray-800 dark:text-gray-200">
+              <h3 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-200">
                 {post.isAnonymous ? 'Anonymous' : 'local_user'}
               </h3>
-              <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 <MapPin className="w-3 h-3 text-accent" />
                 <span>{getDistanceText()}</span>
                 <span>•</span>
-                <span>{formatTimeAgo(post.createdAt)}</span>
+                <span>{post.createdAt ? formatTimeAgo(post.createdAt) : 'Unknown'}</span>
                 <div className="flex items-center space-x-1 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">
                   <Shield className="w-3 h-3 text-amber-600" />
                   <span className="text-xs font-medium text-amber-800 dark:text-amber-200">85</span>
@@ -99,17 +100,24 @@ export default function PostCard({ content, type, onRefresh }: PostCardProps) {
         
         {/* Post Content */}
         {post.imageUrl && (
-          <img 
-            src={post.imageUrl} 
-            alt="Post content" 
-            className="w-full h-64 object-cover"
-          />
+          <div className="relative">
+            <img 
+              src={post.imageUrl} 
+              alt="Post content" 
+              className="w-full h-48 sm:h-64 lg:h-72 object-cover"
+            />
+            {/* Photo indicator badge */}
+            <div className="absolute top-2 sm:top-3 right-2 sm:right-3 bg-black/50 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
+              <Camera className="w-3 h-3" />
+              <span className="hidden sm:inline">Photo</span>
+            </div>
+          </div>
         )}
         
         {/* Post Text */}
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           {post.content && (
-            <p className="text-gray-800 dark:text-gray-200 mb-3">{post.content}</p>
+            <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 mb-3">{post.content}</p>
           )}
           
           {/* Truth Mode Indicator */}
@@ -255,7 +263,7 @@ export default function PostCard({ content, type, onRefresh }: PostCardProps) {
           <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center space-x-2">
               <MapPin className="w-4 h-4 text-accent" />
-              <span>{capsule.locationName || 'Location'}</span>
+              <span>Location</span>
             </div>
             {isAvailable ? (
               <Button size="sm" variant="outline">View Capsule</Button>

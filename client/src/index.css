@@ -176,6 +176,59 @@
     min-width: 44px;
   }
 
+  /* Responsive container classes */
+  .container-mobile {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-content {
+    @apply max-w-4xl mx-auto;
+  }
+
+  /* Responsive text utilities */
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-responsive-base {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-lg {
+    @apply text-base sm:text-lg;
+  }
+
+  /* Responsive spacing utilities */
+  .space-responsive-x {
+    @apply space-x-2 sm:space-x-3 lg:space-x-4;
+  }
+
+  .space-responsive-y {
+    @apply space-y-3 sm:space-y-4 lg:space-y-6;
+  }
+
+  /* Responsive padding utilities */
+  .p-responsive {
+    @apply p-3 sm:p-4 lg:p-6;
+  }
+
+  .px-responsive {
+    @apply px-3 sm:px-4 lg:px-6;
+  }
+
+  .py-responsive {
+    @apply py-3 sm:py-4 lg:py-6;
+  }
+
+  /* Desktop-specific utilities */
+  .desktop-grid {
+    @apply lg:grid lg:grid-cols-2 lg:gap-6;
+  }
+
+  .desktop-sidebar {
+    @apply hidden lg:block lg:w-80;
+  }
+
   /* Bottom navigation safe area */
   .bottom-nav-safe {
     padding-bottom: env(safe-area-inset-bottom);

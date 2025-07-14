@@ -16,18 +16,19 @@ export default function RadiusControl({ radius, onRadiusChange }: RadiusControlP
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-      <div className="flex items-center justify-between mb-3">
-        <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          Visibility Radius
-        </Label>
-        <span className="text-sm text-accent font-semibold">
-          {formatRadius(radius)}
-        </span>
-      </div>
-      
-      <Slider
-        value={[radius]}
+    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 lg:p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-3">
+          <Label className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300">
+            Visibility Radius
+          </Label>
+          <span className="text-xs sm:text-sm text-accent font-semibold">
+            {formatRadius(radius)}
+          </span>
+        </div>
+        
+        <Slider
+          value={[radius]}
         onValueChange={handleRadiusChange}
         max={5000}
         min={50}
@@ -35,9 +36,10 @@ export default function RadiusControl({ radius, onRadiusChange }: RadiusControlP
         className="w-full"
       />
       
-      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
-        <span>50m</span>
-        <span>5km</span>
+        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <span>50m</span>
+          <span>5km</span>
+        </div>
       </div>
     </div>
   );
