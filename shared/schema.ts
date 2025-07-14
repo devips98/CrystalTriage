@@ -107,12 +107,17 @@ export const messages = pgTable("messages", {
 export const geoSwaps = pgTable("geo_swaps", {
   id: serial("id").primaryKey(),
   user1Id: text("user1_id").references(() => users.id).notNull(),
-  user2Id: text("user2_id").references(() => users.id).notNull(),
+  user2Id: text("user2_id").references(() => users.id),
+  user1Item: text("user1_item").notNull(), // Item description
+  user2Item: text("user2_item"), // Item description
   user1ImageUrl: text("user1_image_url"),
   user2ImageUrl: text("user2_image_url"),
   latitude: real("latitude").notNull(),
   longitude: real("longitude").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(), // books, electronics, clothing, etc.
   isCompleted: boolean("is_completed").default(false),
+  isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
 });
 

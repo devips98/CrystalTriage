@@ -3,19 +3,23 @@ import { useQuery } from "@tanstack/react-query";
 import BottomNavigation from "@/components/bottom-navigation";
 import PostCard from "@/components/post-card";
 import CameraModal from "@/components/camera-modal";
+import GeoSwapModal from "@/components/geoswap-modal";
+import GeoSwapList from "@/components/geoswap-list";
 import SettingsModal from "@/components/settings-modal";
 import RadiusControl from "@/components/radius-control";
 import ActivitySummary from "@/components/activity-summary";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "@/hooks/use-location";
 import { useWebSocket } from "@/hooks/use-websocket";
-import { Camera, MapPin, Settings, Users, Moon, Sun } from "lucide-react";
+import { Camera, MapPin, Settings, Users, Moon, Sun, Package } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { Post, Confession, Challenge, GeoTimeCapsule } from "@shared/schema";
 
 export default function Home() {
   const [cameraOpen, setCameraOpen] = useState(false);
+  const [geoSwapOpen, setGeoSwapOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'posts' | 'geoswap'>('posts');
   const [radius, setRadius] = useState(500);
   const [nearbyUsers, setNearbyUsers] = useState(3);
   
@@ -138,64 +142,99 @@ export default function Home() {
           <ActivitySummary summary={summaryData.summary} />
         )}
 
+        {/* Tab Navigation */}
+        <div className="px-4 mb-4">
+          <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+            <Button
+              variant={activeTab === 'posts' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('posts')}
+              className="flex-1 py-2"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              Feed
+            </Button>
+            <Button
+              variant={activeTab === 'geoswap' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('geoswap')}
+              className="flex-1 py-2"
+            >
+              <Package className="w-4 h-4 mr-2" />
+              GeoSwap
+            </Button>
+          </div>
+        </div>
+
         {/* Content Feed */}
         <div className="space-y-4 px-4">
-          {postsLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-4 animate-pulse">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full" />
+          {activeTab === 'posts' ? (
+            postsLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-4 animate-pulse">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full" />
+                      <div className="space-y-2">
+                        <div className="w-20 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                        <div className="w-16 h-3 bg-gray-300 dark:bg-gray-600 rounded" />
+                      </div>
+                    </div>
+                    <div className="w-full h-48 bg-gray-300 dark:bg-gray-600 rounded-lg mb-3" />
                     <div className="space-y-2">
-                      <div className="w-20 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                      <div className="w-16 h-3 bg-gray-300 dark:bg-gray-600 rounded" />
+                      <div className="w-3/4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+                      <div className="w-1/2 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
                     </div>
                   </div>
-                  <div className="w-full h-48 bg-gray-300 dark:bg-gray-600 rounded-lg mb-3" />
-                  <div className="space-y-2">
-                    <div className="w-3/4 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                    <div className="w-1/2 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : allContent.length > 0 ? (
-            allContent.map((item: any) => (
-              <PostCard
-                key={`${item.type}-${item.id}`}
-                content={item}
-                type={item.type}
-                onRefresh={refetchPosts}
-              />
-            ))
-          ) : (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-gray-400" />
+                ))}
               </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                No content nearby
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Be the first to share something in your area!
-              </p>
-              <Button onClick={() => setCameraOpen(true)} className="bg-primary hover:bg-primary/90">
-                <Camera className="w-4 h-4 mr-2" />
-                Create Post
-              </Button>
-            </div>
+            ) : allContent.length > 0 ? (
+              allContent.map((item: any) => (
+                <PostCard
+                  key={`${item.type}-${item.id}`}
+                  content={item}
+                  type={item.type}
+                  onRefresh={refetchPosts}
+                />
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MapPin className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  No content nearby
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Be the first to share something in your area!
+                </p>
+                <Button onClick={() => setCameraOpen(true)} className="bg-primary hover:bg-primary/90">
+                  <Camera className="w-4 h-4 mr-2" />
+                  Create Post
+                </Button>
+              </div>
+            )
+          ) : (
+            <GeoSwapList />
           )}
         </div>
       </main>
 
-      {/* Floating Camera Button */}
-      <Button
-        onClick={() => setCameraOpen(true)}
-        className="fixed bottom-24 right-6 w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full shadow-lg hover:scale-110 transition-transform z-40"
-        size="icon"
-      >
-        <Camera className="w-6 h-6 text-white" />
-      </Button>
+      {/* Floating Action Buttons */}
+      <div className="fixed bottom-24 right-6 flex flex-col space-y-3 z-40">
+        <Button
+          onClick={() => setGeoSwapOpen(true)}
+          className="w-14 h-14 bg-gradient-to-r from-orange-500 to-red-500 rounded-full shadow-lg hover:scale-110 transition-transform"
+          size="icon"
+        >
+          <Package className="w-5 h-5 text-white" />
+        </Button>
+        <Button
+          onClick={() => setCameraOpen(true)}
+          className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full shadow-lg hover:scale-110 transition-transform"
+          size="icon"
+        >
+          <Camera className="w-6 h-6 text-white" />
+        </Button>
+      </div>
 
       {/* Bottom Navigation */}
       <BottomNavigation />
@@ -205,6 +244,11 @@ export default function Home() {
         isOpen={cameraOpen}
         onClose={() => setCameraOpen(false)}
         onPostCreated={refetchPosts}
+      />
+      
+      <GeoSwapModal
+        isOpen={geoSwapOpen}
+        onClose={() => setGeoSwapOpen(false)}
       />
       
       <SettingsModal

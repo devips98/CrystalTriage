@@ -510,6 +510,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // GeoSwap endpoints
+  app.post('/api/geoswaps', upload.single('media'), async (req, res) => {
+    try {
+      const swapData = {
+        ...req.body,
+        user1ImageUrl: req.file ? `/uploads/${req.file.filename}` : null,
+        latitude: parseFloat(req.body.latitude),
+        longitude: parseFloat(req.body.longitude),
+        user1Id: req.body.userId,
+      };
+
+      const validatedData = insertGeoSwapSchema.parse(swapData);
+      const geoSwap = await storage.createGeoSwap(validatedData);
+
+      res.json(geoSwap);
+    } catch (error) {
+      console.error('Error creating GeoSwap:', error);
+      res.status(500).json({ error: 'Failed to create GeoSwap' });
+    }
+  });
+
+  app.get('/api/geoswaps/nearby', async (req, res) => {
+    try {
+      const { latitude, longitude, userId, radius = 1000 } = req.query;
+      
+      if (!latitude || !longitude || !userId) {
+        return res.status(400).json({ error: 'Latitude, longitude, and userId are required' });
+      }
+
+      const opportunities = await storage.findNearbyGeoSwapOpportunities(
+        parseFloat(latitude as string),
+        parseFloat(longitude as string),
+        userId as string
+      );
+
+      res.json(opportunities);
+    } catch (error) {
+      console.error('Error fetching nearby GeoSwaps:', error);
+      res.status(500).json({ error: 'Failed to fetch nearby GeoSwaps' });
+    }
+  });
+
+  app.post('/api/geoswaps/:id/complete', upload.single('media'), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { userId } = req.body;
+      const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+
+      await storage.completeGeoSwap(parseInt(id), userId, imageUrl);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error completing GeoSwap:', error);
+      res.status(500).json({ error: 'Failed to complete GeoSwap' });
+    }
+  });
+
   // Cleanup expired content (scheduled job endpoint)
   app.post('/api/cleanup', async (req, res) => {
     try {

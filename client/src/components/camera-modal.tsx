@@ -107,7 +107,10 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md p-0 bg-black text-white border-0">
+      <DialogContent className="sm:max-w-md p-0 bg-black text-white border-0" aria-describedby="camera-modal-description">
+        <div id="camera-modal-description" className="sr-only">
+          Camera interface for capturing and posting photos with location-based sharing options
+        </div>
         {step === 'camera' ? (
           <div className="h-[80vh] flex flex-col">
             {/* Camera Header */}
