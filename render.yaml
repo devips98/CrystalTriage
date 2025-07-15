@@ -3,13 +3,13 @@ services:
     name: crystaltriage
     env: node
     plan: free
-    buildCommand: npm run build
+    buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 5000
+        value: 10000
     autoDeploy: true
     regions:
       - ohio
@@ -17,7 +17,4 @@ services:
       minInstances: 1
       maxInstances: 3
     healthCheckPath: /
-    disk:
-      name: crystaltriage-data
-      mountPath: /uploads
-      sizeGB: 1
+    # Don't use Docker, use native Node.js environment
