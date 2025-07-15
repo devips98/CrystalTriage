@@ -107,12 +107,12 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md lg:max-w-lg p-0 bg-black text-white border-0 m-0 sm:m-4" aria-describedby="camera-modal-description">
+      <DialogContent className="sm:max-w-sm lg:max-w-md p-0 bg-black text-white border-0 m-0 sm:m-4 max-h-[90vh] sm:max-h-[70vh]" aria-describedby="camera-modal-description">
         <div id="camera-modal-description" className="sr-only">
           Camera interface for capturing and posting photos with location-based sharing options
         </div>
         {step === 'camera' ? (
-          <div className="h-[100vh] sm:h-[80vh] flex flex-col">
+          <div className="h-[90vh] sm:h-[60vh] flex flex-col">
             {/* Camera Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 relative z-10 camera-safe-top">
               <Button
@@ -209,21 +209,21 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
             </div>
           </div>
         ) : (
-          <div className="p-6 space-y-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+          <div className="p-3 space-y-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 max-h-[70vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Create Post</h2>
+              <h2 className="text-base font-semibold">Create Post</h2>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setStep('camera')}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </Button>
             </div>
 
             {/* Preview Image */}
             {capturedImage && (
-              <div className="aspect-square bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+              <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
                 <img
                   src={capturedImage}
                   alt="Captured"
@@ -237,21 +237,21 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
               value={postContent}
               onChange={(e) => setPostContent(e.target.value)}
               placeholder="What's happening in your area?"
-              className="resize-none"
-              rows={3}
+              className="resize-none text-sm"
+              rows={2}
             />
 
             {/* Location Info */}
-            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <MapPin className="w-4 h-4 text-accent" />
+            <div className="flex items-center space-x-2 text-xs text-gray-600 dark:text-gray-400">
+              <MapPin className="w-3 h-3 text-accent" />
               <span>Current Location</span>
             </div>
 
             {/* Settings */}
-            <div className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4">
+            <div className="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-3">
               <div className="flex items-center justify-between">
-                <Label htmlFor="visibility-radius">Visibility Radius</Label>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <Label htmlFor="visibility-radius" className="text-sm">Visibility Radius</Label>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
                   {formatRadius(visibilityRadius)}
                 </span>
               </div>
@@ -263,11 +263,11 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
                 step="50"
                 value={visibilityRadius}
                 onChange={(e) => setVisibilityRadius(parseInt(e.target.value))}
-                className="accent-accent"
+                className="accent-accent h-2"
               />
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="truth-mode">Truth Mode</Label>
+                <Label htmlFor="truth-mode" className="text-sm">Truth Mode</Label>
                 <Switch
                   id="truth-mode"
                   checked={isTruthMode}
@@ -276,7 +276,7 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="anonymous">Post Anonymously</Label>
+                <Label htmlFor="anonymous" className="text-sm">Post Anonymously</Label>
                 <Switch
                   id="anonymous"
                   checked={isAnonymous}
@@ -289,7 +289,7 @@ export default function CameraModal({ isOpen, onClose, onPostCreated }: CameraMo
             <Button
               onClick={handlePost}
               disabled={createPostMutation.isPending || !location}
-              className="w-full bg-primary hover:bg-primary/90"
+              className="w-full bg-primary hover:bg-primary/90 text-sm py-2"
             >
               <Send className="w-4 h-4 mr-2" />
               {createPostMutation.isPending ? 'Posting...' : 'Share Post'}
