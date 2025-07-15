@@ -1,6 +1,10 @@
 # 🚀 CrystalTriage Deployment Guide
 
-Your beautiful CrystalTriage app with glassmorphism UI is ready to deploy! Here are your options:
+Your beautiful CrystalTriage app with glassmorphism UI is ready to deploy! 
+
+## ⚠️ IMPORTANT: Database Setup Required
+
+**Before deploying, you must set up a PostgreSQL database and configure the DATABASE_URL environment variable.**
 
 ## ✨ Current App Status
 - ✅ Modern glassmorphism UI with animations
@@ -8,6 +12,7 @@ Your beautiful CrystalTriage app with glassmorphism UI is ready to deploy! Here 
 - ✅ Dark mode support
 - ✅ Real-time features ready
 - ✅ Production build successful
+- 🔄 **Database setup required**
 - ✅ All components optimized
 
 ## 🌟 Recommended Deployment Options
@@ -36,13 +41,30 @@ npm run deploy:railway
 - ✅ Auto-scaling
 - ✅ GitHub integration
 
-### 🥉 **Render (Reliable Alternative)**
-1. Connect GitHub repo to Render
-2. Build Command: `npm run build`
-3. Start Command: `npm start`
-- ✅ Free tier
+### 🥉 **Render (Currently Selected)**
+
+**Step 1: Database Setup**
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click "New +" → "PostgreSQL"
+3. Name: `crystaltriage-db`
+4. Choose free tier for development
+5. **Copy the "External Database URL"** (starts with `postgresql://`)
+
+**Step 2: Web Service Setup**
+1. Click "New +" → "Web Service"
+2. Connect GitHub repo: `devips98/CrystalTriage`
+3. Configure:
+   - **Build Command**: `npm run build`
+   - **Start Command**: `./start.sh`
+   - **Environment Variables**:
+     - Key: `DATABASE_URL`
+     - Value: Your PostgreSQL connection string from Step 1
+
+**Step 3: Deploy**
 - ✅ Auto-deploys from Git
 - ✅ Built-in SSL
+- ✅ Free tier
+- ✅ Database migrations handled automatically
 
 ## 🐳 Docker Deployment
 ```bash
